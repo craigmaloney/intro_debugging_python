@@ -1,6 +1,6 @@
 :title: Introduction to Debugging in Python
 :author: Craig Maloney
-:css: tutorial.css
+:css: presentation.css
 
 .. title:: Introduction to Debugging in Python
 ----
@@ -38,5 +38,53 @@ Debugging is hard
 
 ----
 
-Not all bugs are as immediately obvious
-=======================================
+Not all bugs are immediately obvious
+====================================
+
+----
+
+.. code:: python 
+
+    def main():
+
+        # Obviously bad code follows
+        for i in range(1, 30):
+            i /= 4
+
+        if i == 30:
+            print("Completed")
+
+    if __name__ == "__main__":
+        main()
+
+----
+
+So what happened?
+=================
+
+----
+
+.. code:: python 
+
+    def main():
+
+        # Obviously bad code follows
+        for i in range(1, 30):
+            i /= 4
+
+        if i == 30:
+            print("Completed")
+
+    if __name__ == "__main__":
+        main()
+
+When we run this nothing is displayed.
+
+----
+
+The lowly print() statement
+===========================
+
+----
+
+
