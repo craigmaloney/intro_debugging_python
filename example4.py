@@ -1,10 +1,12 @@
 import logging
 
 
-# Example 3
+# Example 4
 def main():
 
-    logging.basicConfig(filename='example.log', level=logging.DEBUG)
+    logging.basicConfig(level=logging.INFO)
+
+    logging.info("Beginning program")
 
     # Obviously bad code follows
     logging.debug("Beginning Loop")
@@ -17,7 +19,7 @@ def main():
         print("Completed")
         logging.debug("Completed")
 
-    logging.debug("End program")
+    logging.info("End program")
 
 if __name__ == "__main__":
     main()

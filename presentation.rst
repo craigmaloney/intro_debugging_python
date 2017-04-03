@@ -154,6 +154,133 @@ What we learned...
 
 ----
 
+Switching over to logging...
+============================
+
+----
+
+.. code:: python
+
+    import logging
+
+    # Example 3
+    def main():
+
+        logging.basicConfig(filename='example.log', level=logging.DEBUG)
+
+        # Obviously bad code follows
+        logging.debug("Beginning Loop")
+        for i in range(1, 20):
+            i /= 4
+            logging.debug(i)
+        logging.debug("End Loop")
+
+        if i == 20:
+            print("Completed")
+            logging.debug("Completed")
+
+        logging.debug("End program")
+
+    if __name__ == "__main__":
+        main() 
+
+----
+
+We're back to
+=============
+
+"silent running"...
+===================
+
+----
+
+But now we have a log file of the results...
+============================================
+
+----
+
+example.log:
+::
+
+    DEBUG:root:Beginning Loop
+    DEBUG:root:0.25
+    DEBUG:root:0.5
+    DEBUG:root:0.75
+    DEBUG:root:1.0
+    DEBUG:root:1.25
+    DEBUG:root:1.5
+    DEBUG:root:1.75
+    DEBUG:root:2.0
+    DEBUG:root:2.25
+    DEBUG:root:2.5
+    DEBUG:root:2.75
+    DEBUG:root:3.0
+    DEBUG:root:3.25
+    DEBUG:root:3.5
+    DEBUG:root:3.75
+    DEBUG:root:4.0
+    DEBUG:root:4.25
+    DEBUG:root:4.5
+    DEBUG:root:4.75
+    DEBUG:root:End Loop
+    DEBUG:root:End program
+
+----
+
+So, what does this get us?
+==========================
+
+----
+
+Using logging gives us the ability to:
+
+
+* Turn debugging messages off and on again
+* Not have to modify all of our code to turn debug messages on or off
+* Filter which messages are logged and which are silently ignored
+
+----
+
+.. code:: python
+
+    import logging
+
+
+    # Example 4
+    def main():
+
+        logging.basicConfig(level=logging.INFO)
+
+        logging.info("Beginning program")
+
+        # Obviously bad code follows
+        logging.debug("Beginning Loop")
+        for i in range(1, 20):
+            i /= 4
+            logging.debug(i)
+        logging.debug("End Loop")
+
+        if i == 20:
+            print("Completed")
+            logging.debug("Completed")
+
+        logging.info("End program")
+
+    if __name__ == "__main__":
+        main()
+
+----
+
+::
+
+    craig@lister:~/projects/intro_debugging_python$ python example4.py
+    INFO:root:Beginning program
+    INFO:root:End program
+
+
+----
+
+
 Let's try another example...
 ============================
 
@@ -161,7 +288,7 @@ Let's try another example...
 
 .. code:: python
 
-    # Example 3
+    # sum_of_numbers.py
     def main():
         list_of_numbers = []
         with open("list_of_numbers", 'rt') as f:
