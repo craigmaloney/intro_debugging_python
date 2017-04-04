@@ -280,6 +280,11 @@ Using logging gives us the ability to:
 
 ----
 
+So our debugging messages can be turned on and off at will
+==========================================================
+
+----
+
 
 Let's try another example...
 ============================
@@ -309,11 +314,11 @@ Running the code...
 
 ::
 
-    craig@lister:~/projects/intro_debugging_python$ python3 example3.py 
+    craig@lister:~/projects/intro_debugging_python$ env/bin/python3 sum_of_numbers.py 
     Traceback (most recent call last):
-    File "example3.py", line 10, in <module>
+    File "sum_of_numbers.py", line 11, in <module>
         main()
-    File "example3.py", line 7, in main
+    File "sum_of_numbers.py", line 8, in main
         print("The sum is {total}".format(total=sum(list_of_numbers)))
     TypeError: unsupported operand type(s) for +: 'int' and 'str'
 
@@ -324,8 +329,8 @@ So, what happened?
 
 ----
 
-Sure we could print the data, but...
-====================================
+Sure we could log or print the data, but...
+===========================================
 
 ----
 
@@ -336,4 +341,205 @@ Sure we could print the data, but...
     
 ----
 
+That's a LOT of data to wade through...
+=======================================
+
+----
+
+One approach...
+===============
+
+----
+
+.. code:: python
+
+    # sum_of_numbers.py
+    def main():
+        list_of_numbers = []
+        with open("list_of_numbers", 'rt') as f:
+            for number in f:
+                list_of_numbers.append(number)
+
+        # Print out the first element for debugging
+        print(list_of_numbers[0])
+
+        print("The sum is {total}".format(total=sum(list_of_numbers)))
+
+    if __name__ == "__main__":
+        main()
+
+----
+
+::
+
+    craig@lister:~/projects/intro_debugging_python$ env/bin/python3 sum_of_numbers.py 
+    24601
+
+    Traceback (most recent call last):
+    File "sum_of_numbers.py", line 13, in <module>
+        main()
+    File "sum_of_numbers.py", line 10, in main
+        print("The sum is {total}".format(total=sum(list_of_numbers)))
+    TypeError: unsupported operand type(s) for +: 'int' and 'str'
+
+----
+
+So, that sort of worked?
+========================
+
+----
+
+.. code:: python
+
+    # sum_of_numbers.py
+    def main():
+        list_of_numbers = []
+        with open("list_of_numbers", 'rt') as f:
+            for number in f:
+                list_of_numbers.append(number)
+
+        # Print out debugging information for first element
+        print(list_of_numbers[0])
+        print(type(list_of_numbers[0]))
+
+        print("The sum is {total}".format(total=sum(list_of_numbers)))
+
+    if __name__ == "__main__":
+        main()
+
+----
+
+::
+
+    craig@lister:~/projects/intro_debugging_python$ env/bin/python3 sum_of_numbers.py 
+    24601
+
+    <class 'str'>
+    Traceback (most recent call last):
+    File "sum_of_numbers.py", line 14, in <module>
+        main()
+    File "sum_of_numbers.py", line 11, in main
+        print("The sum is {total}".format(total=sum(list_of_numbers)))
+    TypeError: unsupported operand type(s) for +: 'int' and 'str'
+
+----
+
+``print()`` is a blunt instrument 
+=================================
+
+----
+
+Even logging isn't of much help:
+
+.. code:: python
+
+    # sum_of_numbers.py
+    import logging
+
+
+    def main():
+        logging.basicConfig(level=logging.DEBUG)
+
+        list_of_numbers = []
+        with open("list_of_numbers", 'rt') as f:
+            for number in f:
+                list_of_numbers.append(number)
+
+        # Print out debugging information for first element
+        logging.debug(list_of_numbers[0])
+        logging.debug(type(list_of_numbers[0]))
+
+        print("The sum is {total}".format(total=sum(list_of_numbers)))
+
+    if __name__ == "__main__":
+        main()
+
+----
+
+::
+
+    craig@lister:~/projects/intro_debugging_python$ env/bin/python3 sum_of_numbers.py 
+    DEBUG:root:24601
+
+    DEBUG:root:<class 'str'>
+    Traceback (most recent call last):
+    File "sum_of_numbers.py", line 19, in <module>
+        main()
+    File "sum_of_numbers.py", line 16, in main
+        print("The sum is {total}".format(total=sum(list_of_numbers)))
+    TypeError: unsupported operand type(s) for +: 'int' and 'str'
+    craig@lister:~/projects/intro_debugging_python$ 
+
+----
+
+Enter the debugger
+==================
+
+----
+
+::
+
+    craig@lister:~/projects/intro_debugging_python$ env/bin/python -m pdb sum_of_numbers.py 
+    > /home/craig/projects/intro_debugging_python/sum_of_numbers.py(4)<module>()
+    -> def main():
+    (Pdb) b 11
+    Breakpoint 1 at /home/craig/projects/intro_debugging_python/sum_of_numbers.py:11
+    (Pdb) l
+    1  	# sum_of_numbers.py
+    2  	
+    3  	
+    4  ->	def main():
+    5  	
+    6  	    list_of_numbers = []
+    7  	    with open("list_of_numbers", 'rt') as f:
+    8  	        for number in f:
+    9  	            list_of_numbers.append(number)
+    10  	
+    11 B	    print("The sum is {total}".format(total=sum(list_of_numbers)))
+    (Pdb) c
+    > /home/craig/projects/intro_debugging_python/sum_of_numbers.py(11)main()
+    -> print("The sum is {total}".format(total=sum(list_of_numbers)))
+    (Pdb) 
+
+----
+
+::
+
+    craig@lister:~/projects/intro_debugging_python$ env/bin/python -m pdb sum_of_numbers.py 
+    > /home/craig/projects/intro_debugging_python/sum_of_numbers.py(4)<module>()
+    -> def main():
+    (Pdb) b 11
+    Breakpoint 1 at /home/craig/projects/intro_debugging_python/sum_of_numbers.py:11
+    (Pdb) l
+    1  	# sum_of_numbers.py
+    2  	
+    3  	
+    4  ->	def main():
+    5  	
+    6  	    list_of_numbers = []
+    7  	    with open("list_of_numbers", 'rt') as f:
+    8  	        for number in f:
+    9  	            list_of_numbers.append(number)
+    10  	
+    11 B	    print("The sum is {total}".format(total=sum(list_of_numbers)))
+    (Pdb) c
+    > /home/craig/projects/intro_debugging_python/sum_of_numbers.py(11)main()
+    -> print("The sum is {total}".format(total=sum(list_of_numbers)))
+    (Pdb) p list_of_numbers[0]
+    '24601\n'
+    (Pdb) 
+
+----
+
+Breakpoints:
+
+* ``b``: Shows all breakpoints with it's *number*
+* ``b`` (*lineno*): Sets a break point at a particular line or function
+
+----
+
+Cheatsheet
+==========
+
+https://github.com/nblock/pdb-cheatsheet
 

@@ -1,5 +1,8 @@
 # sum_of_numbers.py
+
+
 def main():
+
     list_of_numbers = []
     with open("list_of_numbers", 'rt') as f:
         for number in f:
