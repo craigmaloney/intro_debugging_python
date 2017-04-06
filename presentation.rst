@@ -70,6 +70,22 @@ What does this code do?
 
 ----
 
+Let's execute it and see what this does
+=======================================
+
+----
+
+::
+
+    craig@lister:~/projects/intro_debugging_python$ env/bin/python3 example1.py 
+    craig@lister:~/projects/intro_debugging_python$ 
+
+----
+
+.. image:: images/2017-04-06-192152.jpg
+
+----
+
 So, what happened?
 ==================
 
@@ -614,6 +630,8 @@ OK, back to debugging the code...
     if __name__ == "__main__":
         main()
 
+We convert ``number`` to an integer...
+
 ----
 
 ::
@@ -666,6 +684,15 @@ Conditional Breakpoint
 
 ----
 
+Someone left a stray "Bob" in the data
+======================================
+
+----
+
+(Dammit Bob, get out of the data)
+
+----
+
 So, how do we work around this?
 ===============================
 
@@ -712,6 +739,11 @@ One approach...
 
 ----
 
+Let's do one better...
+======================
+
+----
+
 .. code:: python
 
     # sum_of_numbers.py
@@ -747,3 +779,30 @@ One approach...
 
     The sum is 30009298902
 
+----
+
+Now we're logging a warning whenever we get non-integer data
+============================================================
+
+----
+
+(Thanks a lot, Bob)
+
+----
+
+So, what have we learned?
+=========================
+
+----
+
+What we've learned:
+
+* We can invoke the Python Debugger on our code
+
+  * ``python3 -m pdb`` *filename.py*
+  * ``import pdb;pdb.set_trace()``
+
+* We can set breakpoints in our code
+* We can use conditionals for breakpoints
+
+----
