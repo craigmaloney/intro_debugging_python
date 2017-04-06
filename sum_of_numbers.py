@@ -8,6 +8,9 @@ def main():
         for number in f:
             list_of_numbers.append(number)
 
+    import pdb
+    pdb.set_trace()
+
     print("The sum is {total}".format(total=sum(list_of_numbers)))
 
 if __name__ == "__main__":

@@ -44,8 +44,7 @@ Debugging is not just about fixing bugs...
 
 ----
 
-Debugging is about matching our expectations of what the code is doing with the reality of what the computer is executing
-=========================================================================================================================
+Debugging is about matching our expectations of what the code should be doing with the reality of what the computer is executing.
 
 ----
 
@@ -531,15 +530,220 @@ Enter the debugger
 
 ----
 
-Breakpoints:
-
-* ``b``: Shows all breakpoints with it's *number*
-* ``b`` (*lineno*): Sets a break point at a particular line or function
-
-----
-
 Cheatsheet
 ==========
 
 https://github.com/nblock/pdb-cheatsheet
+
+----
+
+
+.. image:: images/pdb-cheatsheet.png
+    :width: 1200px
+
+----
+
+Invoking the Debugger
+=====================
+
+----
+
+* ``python -m pdb`` *filename.py*
+
+* *In the sourcecode itself:*
+
+  * ``import pdb;pdb.set_trace()``
+
+----
+
+.. code:: python
+
+    # sum_of_numbers.py
+
+
+    def main():
+
+        list_of_numbers = []
+        with open("list_of_numbers", 'rt') as f:
+            for number in f:
+                list_of_numbers.append(number)
+
+        # Start the debugger here
+        import pdb
+        pdb.set_trace()
+
+        print("The sum is {total}".format(total=sum(list_of_numbers)))
+
+    if __name__ == "__main__":
+        main()
+
+----
+
+::
+
+    craig@lister:~/projects/intro_debugging_python$ env/bin/python3 sum_of_numbers.py 
+    > /home/craig/projects/intro_debugging_python/sum_of_numbers.py(14)main()
+    -> print("The sum is {total}".format(total=sum(list_of_numbers)))
+    (Pdb) 
+
+----
+
+OK, back to debugging the code...
+=================================
+
+----
+
+.. code:: python
+
+    # sum_of_numbers.py
+
+
+    def main():
+
+        import pdb
+        pdb.set_trace()
+
+        list_of_numbers = []
+        with open("list_of_numbers", 'rt') as f:
+            for number in f:
+                # Convert input to an integer
+                list_of_numbers.append(int(number))
+
+        print("The sum is {total}".format(total=sum(list_of_numbers)))
+
+    if __name__ == "__main__":
+        main()
+
+----
+
+::
+
+    craig@lister:~/projects/intro_debugging_python$ env/bin/python3 integer_sum_of_numbers.py 
+    > /home/craig/projects/intro_debugging_python/integer_sum_of_numbers.py(9)main()
+    -> list_of_numbers = []
+    (Pdb) c
+    Traceback (most recent call last):
+    File "integer_sum_of_numbers.py", line 18, in <module>
+        main()
+    File "integer_sum_of_numbers.py", line 9, in main
+        list_of_numbers = []
+    ValueError: invalid literal for int() with base 10: 'Bob\n'
+
+----
+
+What the @#$%?!
+===============
+
+----
+
+Conditional Breakpoint
+======================
+
+----
+
+::
+
+    (Pdb) b 13, number == 'Bob\n'
+    Breakpoint 1 at /home/craig/projects/intro_debugging_python/integer_sum_of_numbers.py:13
+    (Pdb) c
+    > /home/craig/projects/intro_debugging_python/integer_sum_of_numbers.py(13)main()
+    -> list_of_numbers.append(int(number))
+    (Pdb) p number
+    'Bob\n'
+    (Pdb) l
+    8  	
+    9  	    list_of_numbers = []
+    10  	    with open("list_of_numbers", 'rt') as f:
+    11  	        for number in f:
+    12  	            # Convert input to an integer
+    13 B->	            list_of_numbers.append(int(number))
+    14  	
+    15  	    print("The sum is {total}".format(total=sum(list_of_numbers)))
+    16  	
+    17  	if __name__ == "__main__":
+    18  	    main()
+    (Pdb) 
+
+----
+
+So, how do we work around this?
+===============================
+
+----
+
+One approach...
+===============
+
+----
+
+.. code:: python
+
+    # sum_of_numbers.py
+
+
+    def main():
+
+        import pdb
+        pdb.set_trace()
+
+        list_of_numbers = []
+        with open("list_of_numbers", 'rt') as f:
+            for number in f:
+                try:
+                    # Convert input to an integer
+                    list_of_numbers.append(int(number))
+                except ValueError:
+                    pass
+
+        print("The sum is {total}".format(total=sum(list_of_numbers)))
+
+    if __name__ == "__main__":
+        main()
+
+----
+
+::
+
+    craig@lister:~/projects/intro_debugging_python$ env/bin/python3 integer_sum_of_numbers.py 
+    > /home/craig/projects/intro_debugging_python/integer_sum_of_numbers.py(9)main()
+    -> list_of_numbers = []
+    (Pdb) c
+    The sum is 30009298902
+
+----
+
+.. code:: python
+
+    # sum_of_numbers.py
+
+    import logging
+
+
+    def main():
+
+        logging.basicConfig(level=logging.INFO)
+        list_of_numbers = []
+        with open("list_of_numbers", 'rt') as f:
+            for number in f:
+                try:
+                    # Convert input to an integer
+                    list_of_numbers.append(int(number))
+                except ValueError:
+                    logging.warning("Received non-integer input")
+                    logging.warning(number)
+
+        print("The sum is {total}".format(total=sum(list_of_numbers)))
+
+    if __name__ == "__main__":
+        main()
+
+----
+
+::
+
+    craig@lister:~/projects/intro_debugging_python$ env/bin/python3 integer_sum_of_numbers.py 
+    WARNING:root:Received non-integer input
+    WARNING:root:Bob
+
+    The sum is 30009298902
 
