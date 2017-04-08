@@ -806,3 +806,67 @@ What we've learned:
 * We can use conditionals for breakpoints
 
 ----
+
+Let's look more at debugging real computer code...
+==================================================
+
+----
+
+.. code:: python
+
+    def fib(n):
+        if n == 1:
+            return 1
+        elif n == 0:
+            return 0
+        else:
+            return fib(n-1) + fib(n-2)
+
+
+    def main():
+        print(fib(10))
+
+
+    if __name__ == '__main__':
+        main()
+
+----
+
+Let's see what this code does...
+
+----
+
+::
+
+    craig@bluemidget:~/projects/intro_debugging_python$ python3 -m pdb fib.py 
+    > /home/craig/projects/intro_debugging_python/fib.py(1)<module>()
+    -> def fib(n):
+    (Pdb) b 7
+    Breakpoint 1 at /home/craig/projects/intro_debugging_python/fib.py:7
+    (Pdb) ll
+    1  -> def fib(n):
+    2         if n == 1:
+    3             return 1
+    4         elif n == 0:
+    5             return 0
+    6         else:
+    7 B           return fib(n-1) + fib(n-2)
+    8     
+    9     
+    10     def main():
+    11         print(fib(10))
+    12     
+    13     
+    14     if __name__ == '__main__':
+    15         main()
+
+---
+
+::
+
+(Pdb) commands 1
+(com) bt
+(com) args
+(com) end
+(Pdb)
+
