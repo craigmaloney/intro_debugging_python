@@ -411,6 +411,8 @@ Sure we could log or print the data, but...
 
     craig@lister:~/projects/intro_debugging_python$ wc -l list_of_numbers 
     2000001 list_of_numbers
+
+That's two million and one records.
     
 ----
 
@@ -920,10 +922,12 @@ Let's see what this code does...
 
 ----
 
-Replicating the ``watch`` command from ``gdb``
-==============================================
+Repetitious commands around breakpoints...
+==========================================
 
 ----
+
+Wouldn't it be nice to see the call stack and the current arguments of the current method call?
 
 ::
 
@@ -1252,6 +1256,85 @@ Temporary Breakpoints...
     (Pdb) 
 
 
+----
+
+Python3 Debugging Goodies...
+============================
+
+----
+
+Display
+=======
+
+----
+
+::
+
+    > /home/craig/projects/intro_debugging_python/pointless_loop.py(1)<module>()
+    -> def pointless_loop(n):
+    (Pdb) n
+    > /home/craig/projects/intro_debugging_python/pointless_loop.py(9)<module>()
+    -> def main():
+    (Pdb) n
+    > /home/craig/projects/intro_debugging_python/pointless_loop.py(12)<module>()
+    -> if __name__ == '__main__':
+    (Pdb) n
+    > /home/craig/projects/intro_debugging_python/pointless_loop.py(13)<module>()
+    -> main()
+    (Pdb) s
+    --Call--
+    > /home/craig/projects/intro_debugging_python/pointless_loop.py(9)main()
+    -> def main():
+    (Pdb) n
+
+----
+
+ ::
+
+    > /home/craig/projects/intro_debugging_python/pointless_loop.py(10)main()
+    -> pointless_loop(30)
+    (Pdb) s
+    --Call--
+    > /home/craig/projects/intro_debugging_python/pointless_loop.py(1)pointless_loop()
+    -> def pointless_loop(n):
+    (Pdb) display number_sum
+    display number_sum: ** raised NameError: name 'number_sum' is not defined **
+    (Pdb) n
+    > /home/craig/projects/intro_debugging_python/pointless_loop.py(3)pointless_loop()
+    -> number_sum = 0
+    (Pdb) n
+    > /home/craig/projects/intro_debugging_python/pointless_loop.py(5)pointless_loop()
+    -> for i in range(1, n+1):
+    display number_sum: 0  [old: ** raised NameError: name 'number_sum' is not defined **]
+    (Pdb) 
+
+----
+
+::
+
+    (Pdb) n
+    > /home/craig/projects/intro_debugging_python/pointless_loop.py(6)pointless_loop()
+    -> number_sum += i
+    (Pdb) n
+    > /home/craig/projects/intro_debugging_python/pointless_loop.py(5)pointless_loop()
+    -> for i in range(1, n+1):
+    display number_sum: 1  [old: 0]
+    (Pdb) n
+    > /home/craig/projects/intro_debugging_python/pointless_loop.py(6)pointless_loop()
+    -> number_sum += i
+    (Pdb) n
+    > /home/craig/projects/intro_debugging_python/pointless_loop.py(5)pointless_loop()
+    -> for i in range(1, n+1):
+    display number_sum: 3  [old: 1]
+    (Pdb) n
+    > /home/craig/projects/intro_debugging_python/pointless_loop.py(6)pointless_loop()
+    -> number_sum += i
+    (Pdb) n
+    > /home/craig/projects/intro_debugging_python/pointless_loop.py(5)pointless_loop()
+    -> for i in range(1, n+1):
+    display number_sum: 6  [old: 3]
+    (Pdb) n
+   
 ----
 
 Pdb++
