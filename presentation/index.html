@@ -1,0 +1,682 @@
+<!DOCTYPE html><html xmlns="http://www.w3.org/1999/xhtml"><head><title>Introduction to Debugging in Python Introduction to Debugging in Python</title><meta name="generator" content="Hovercraft! 1.0 http://regebro.github.com/hovercraft"></meta><meta name="author" content="Craig Maloney"></meta><link rel="stylesheet" href="css/hovercraft.css" media="all"></link><link rel="stylesheet" href="css/impressConsole.css" media="all"></link><link rel="stylesheet" href="css/highlight.css" media="all"></link><link rel="stylesheet" href="presentation.css" media="screen,projection"></link></head><body class="impress-not-supported"><div id="impress"><div class="step step-level-1" step="0" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="0" data-y="0" data-z="0"><h1 id="introduction-to-debugging-in-python">Introduction to Debugging in Python</h1><ul><li>Author: Craig Maloney</li><li>Email: <a href="mailto:craig@decafbad.net">craig@decafbad.net</a></li><li>Website: <a href="http://decafbad.nety">http://decafbad.nety</a></li><li>Presented: 2017-04-11</li></ul></div><div class="step step-level-1" step="1" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="1600" data-y="0" data-z="0"><h1 id="programming-is-hard">Programming is hard</h1></div><div class="step step-level-1" step="2" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="3200" data-y="0" data-z="0"><h1 id="programming-leads-to-bugs">Programming leads to bugs</h1></div><div class="step step-level-1" step="3" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="4800" data-y="0" data-z="0"><img src="images/Commodore_Grace_M._Hopper,_USN_(covered).jpg" width="600px"></img><div class="notes"><p>Grace Brewster Murray Hopper, credited with the first literal computer bug, found in the Mark II computer.</p></div></div><div class="step step-level-1" step="4" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="6400" data-y="0" data-z="0"><img src="images/H96566k.jpg"></img><div class="notes"><p>While she was working on a Mark II Computer at a US Navy research lab in Dahlgren, Virginia in 1947, her associates discovered a moth stuck in a relay impeding its operation. While neither Hopper nor her crew mentioned the phrase "debugging" in their logs, the case was held as an instance of literal "debugging", perhaps the first in history. The term bug had been in use for many years in engineering.[60][61] The remains of the moth can be found in the group's log book at the Smithsonian Institution's National Museum of American History in Washington, D.C.[62]</p></div></div><div class="step step-level-1" step="5" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="8000" data-y="0" data-z="0"><h1 id="not-all-bugs-are-as-obvious">Not all bugs are as obvious</h1></div><div class="step step-level-1" step="6" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="9600" data-y="0" data-z="0"><h1 id="debugging-is-not-just-about-fixing-bugs">Debugging is not just about fixing bugs...</h1></div><div class="step step-level-1" step="7" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="11200" data-y="0" data-z="0"><p>Debugging is about matching our expectations of what the code should be doing with the reality of what the computer is executing.</p></div><div class="step step-level-1" step="8" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="12800" data-y="0" data-z="0"><h1 id="what-does-this-code-do">What does this code do?</h1></div><div class="step step-level-1" step="9" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="14400" data-y="0" data-z="0"><pre class="highlight code python"><span class="c1"># Example 1</span>
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+
+    <span class="c1"># Obviously bad code follows</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">20</span><span class="p">):</span>
+        <span class="n">i</span> <span class="o">/=</span> <span class="mi">4</span>
+
+    <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">20</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">"Completed"</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span></pre></div><div class="step step-level-1" step="10" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="16000" data-y="0" data-z="0"><h1 id="let-s-execute-it-and-see-what-this-does">Let's execute it and see what this does</h1></div><div class="step step-level-1" step="11" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="17600" data-y="0" data-z="0"><pre class="highlight ">craig@lister:~/projects/intro_debugging_python$ env/bin/python3 example1.py
+craig@lister:~/projects/intro_debugging_python$</pre></div><div class="step step-level-1" step="12" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="19200" data-y="0" data-z="0"><img src="images/2017-04-06-192152.jpg"></img></div><div class="step step-level-1" step="13" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="20800" data-y="0" data-z="0"><h1 id="so-what-happened">So, what happened?</h1></div><div class="step step-level-1" step="14" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="22400" data-y="0" data-z="0"><pre class="highlight code python"><span class="c1"># Example 1</span>
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+
+    <span class="c1"># Obviously bad code follows</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">20</span><span class="p">):</span>
+        <span class="n">i</span> <span class="o">/=</span> <span class="mi">4</span>
+
+    <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">20</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">"Completed"</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span></pre><p>When we run this nothing is displayed.</p></div><div class="step step-level-1" step="15" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="24000" data-y="0" data-z="0"><h1 id="the-lowly-print-statement">The lowly <tt>print()</tt> statement</h1></div><div class="step step-level-1" step="16" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="25600" data-y="0" data-z="0"><pre class="highlight code python"><span class="c1"># Example 2</span>
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+
+    <span class="c1"># Obviously bad code follows</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">20</span><span class="p">):</span>
+        <span class="n">i</span> <span class="o">/=</span> <span class="mi">4</span>
+        <span class="k">print</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">20</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">"Completed"</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span></pre></div><div class="step step-level-1" step="17" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="27200" data-y="0" data-z="0"><pre class="highlight ">craig@lister:~/projects/intro_debugging_python$ python3 example2.py
+0.25
+0.5
+0.75
+1.0
+1.25
+1.5
+1.75
+2.0
+2.25
+2.5
+2.75
+3.0
+3.25
+3.5
+3.75
+4.0
+4.25
+4.5
+4.75</pre><p>Now we can see what's happening with the <tt>i</tt> variable.</p></div><div class="step step-level-1" step="18" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="28800" data-y="0" data-z="0"><h1 id="what-we-learned">What we learned...</h1><ul><li><tt>print(i)</tt> shows us the value inside of <tt>i</tt></li><li><tt>i</tt> is reset each iteration by the <tt>range(1, 20)</tt> generator.</li><li><tt>i</tt> will never be equal to <tt>20</tt> in this program, so we have dead code.</li></ul></div><div class="step step-level-1" step="19" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="30400" data-y="0" data-z="0"><h1 id="switching-over-to-logging">Switching over to logging...</h1></div><div class="step step-level-1" step="20" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="32000" data-y="0" data-z="0"><pre class="highlight code python"><span class="kn">import</span> <span class="nn">logging</span>
+
+<span class="c1"># Example 3</span>
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+
+    <span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s1">'example.log'</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">)</span>
+
+    <span class="c1"># Obviously bad code follows</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Beginning Loop"</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">20</span><span class="p">):</span>
+        <span class="n">i</span> <span class="o">/=</span> <span class="mi">4</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"End Loop"</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">20</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">"Completed"</span><span class="p">)</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Completed"</span><span class="p">)</span>
+
+    <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"End program"</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span></pre></div><div class="step step-level-1" step="21" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="33600" data-y="0" data-z="0"><h1 id="we-re-back-to">We're back to</h1><h1 id="silent-running">"silent running"...</h1></div><div class="step step-level-1" step="22" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="35200" data-y="0" data-z="0"><h1 id="but-now-we-have-a-log-file-of-the-results">But now we have a log file of the results...</h1></div><div class="step step-level-1" step="23" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="36800" data-y="0" data-z="0"><p>example.log:</p><pre class="highlight ">DEBUG:root:Beginning Loop
+DEBUG:root:0.25
+DEBUG:root:0.5
+DEBUG:root:0.75
+DEBUG:root:1.0
+DEBUG:root:1.25
+DEBUG:root:1.5
+DEBUG:root:1.75
+DEBUG:root:2.0
+DEBUG:root:2.25
+DEBUG:root:2.5
+DEBUG:root:2.75
+DEBUG:root:3.0
+DEBUG:root:3.25
+DEBUG:root:3.5
+DEBUG:root:3.75
+DEBUG:root:4.0
+DEBUG:root:4.25
+DEBUG:root:4.5
+DEBUG:root:4.75
+DEBUG:root:End Loop
+DEBUG:root:End program</pre></div><div class="step step-level-1" step="24" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="38400" data-y="0" data-z="0"><h1 id="so-what-does-this-get-us">So, what does this get us?</h1></div><div class="step step-level-1" step="25" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="40000" data-y="0" data-z="0"><p>Using logging gives us the ability to:</p><ul><li>Turn debugging messages off and on again</li><li>Not have to modify all of our code to turn debug messages on or off</li><li>Filter which messages are logged and which are silently ignored</li></ul></div><div class="step step-level-1" step="26" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="41600" data-y="0" data-z="0"><pre class="highlight code python"><span class="kn">import</span> <span class="nn">logging</span>
+
+
+<span class="c1"># Example 4</span>
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+
+    <span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
+
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"Beginning program"</span><span class="p">)</span>
+
+    <span class="c1"># Obviously bad code follows</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Beginning Loop"</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">20</span><span class="p">):</span>
+        <span class="n">i</span> <span class="o">/=</span> <span class="mi">4</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"End Loop"</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">20</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">"Completed"</span><span class="p">)</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Completed"</span><span class="p">)</span>
+
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"End program"</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span></pre></div><div class="step step-level-1" step="27" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="43200" data-y="0" data-z="0"><pre class="highlight ">craig@lister:~/projects/intro_debugging_python$ python example4.py
+INFO:root:Beginning program
+INFO:root:End program</pre></div><div class="step step-level-1" step="28" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="44800" data-y="0" data-z="0"><pre class="highlight ">craig@lister:~/projects/intro_debugging_python$ git diff example4.py
+diff --git a/example4.py b/example4.py
+index 8b75c70..08824ee 100644
+--- a/example4.py
++++ b/example4.py
+@@ -4,7 +4,7 @@ import logging
+# Example 4
+def main():
+
+-    logging.basicConfig(level=logging.INFO)
++    logging.basicConfig(level=logging.DEBUG)
+
+    logging.info("Beginning program")</pre></div><div class="step step-level-1" step="29" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="46400" data-y="0" data-z="0"><pre class="highlight ">craig@lister:~/projects/intro_debugging_python$ python3 example4.py
+INFO:root:Beginning program
+DEBUG:root:Beginning Loop
+DEBUG:root:0.25
+DEBUG:root:0.5
+DEBUG:root:0.75
+DEBUG:root:1.0
+DEBUG:root:1.25
+DEBUG:root:1.5
+DEBUG:root:1.75
+DEBUG:root:2.0
+DEBUG:root:2.25
+DEBUG:root:2.5
+DEBUG:root:2.75
+DEBUG:root:3.0
+DEBUG:root:3.25
+DEBUG:root:3.5
+DEBUG:root:3.75
+DEBUG:root:4.0
+DEBUG:root:4.25
+DEBUG:root:4.5
+DEBUG:root:4.75
+DEBUG:root:End Loop
+INFO:root:End program</pre></div><div class="step step-level-1" step="30" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="48000" data-y="0" data-z="0"><h1 id="so-our-debugging-messages-can-be-turned-on-and-off-at-will">So our debugging messages can be turned on and off at will</h1></div><div class="step step-level-1" step="31" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="49600" data-y="0" data-z="0"><h1 id="let-s-try-another-example">Let's try another example...</h1></div><div class="step step-level-1" step="32" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="51200" data-y="0" data-z="0"><pre class="highlight code python"><span class="c1"># sum_of_numbers.py</span>
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="n">list_of_numbers</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">"list_of_numbers"</span><span class="p">,</span> <span class="s1">'rt'</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">number</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">list_of_numbers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">number</span><span class="p">)</span>
+
+    <span class="k">print</span><span class="p">(</span><span class="s2">"The sum is {total}"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">total</span><span class="o">=</span><span class="nb">sum</span><span class="p">(</span><span class="n">list_of_numbers</span><span class="p">)))</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span></pre></div><div class="step step-level-1" step="33" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="52800" data-y="0" data-z="0"><h1 id="running-the-code">Running the code...</h1></div><div class="step step-level-1" step="34" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="54400" data-y="0" data-z="0"><pre class="highlight ">craig@lister:~/projects/intro_debugging_python$ env/bin/python3 sum_of_numbers.py
+Traceback (most recent call last):
+File "sum_of_numbers.py", line 11, in &lt;module&gt;
+    main()
+File "sum_of_numbers.py", line 8, in main
+    print("The sum is {total}".format(total=sum(list_of_numbers)))
+TypeError: unsupported operand type(s) for +: 'int' and 'str'</pre></div><div class="step step-level-1" step="35" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="56000" data-y="0" data-z="0"><h1 id="id1">So, what happened?</h1></div><div class="step step-level-1" step="36" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="57600" data-y="0" data-z="0"><h1 id="sure-we-could-log-or-print-the-data-but">Sure we could log or print the data, but...</h1></div><div class="step step-level-1" step="37" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="59200" data-y="0" data-z="0"><pre class="highlight ">craig@lister:~/projects/intro_debugging_python$ wc -l list_of_numbers
+2000001 list_of_numbers</pre><p>That's two million and one records.</p></div><div class="step step-level-1" step="38" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="60800" data-y="0" data-z="0"><h1 id="that-s-a-lot-of-data-to-wade-through">That's a LOT of data to wade through...</h1></div><div class="step step-level-1" step="39" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="62400" data-y="0" data-z="0"><h1 id="one-approach">One approach...</h1></div><div class="step step-level-1" step="40" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="64000" data-y="0" data-z="0"><pre class="highlight code python"><span class="c1"># sum_of_numbers.py</span>
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="n">list_of_numbers</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">"list_of_numbers"</span><span class="p">,</span> <span class="s1">'rt'</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">number</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">list_of_numbers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">number</span><span class="p">)</span>
+
+    <span class="c1"># Print out the first element for debugging</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">list_of_numbers</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+    <span class="k">print</span><span class="p">(</span><span class="s2">"The sum is {total}"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">total</span><span class="o">=</span><span class="nb">sum</span><span class="p">(</span><span class="n">list_of_numbers</span><span class="p">)))</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span></pre></div><div class="step step-level-1" step="41" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="65600" data-y="0" data-z="0"><pre class="highlight ">craig@lister:~/projects/intro_debugging_python$ env/bin/python3 sum_of_numbers.py
+24601
+
+Traceback (most recent call last):
+File "sum_of_numbers.py", line 13, in &lt;module&gt;
+    main()
+File "sum_of_numbers.py", line 10, in main
+    print("The sum is {total}".format(total=sum(list_of_numbers)))
+TypeError: unsupported operand type(s) for +: 'int' and 'str'</pre></div><div class="step step-level-1" step="42" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="67200" data-y="0" data-z="0"><h1 id="so-that-sort-of-worked">So, that sort of worked?</h1></div><div class="step step-level-1" step="43" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="68800" data-y="0" data-z="0"><pre class="highlight code python"><span class="c1"># sum_of_numbers.py</span>
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="n">list_of_numbers</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">"list_of_numbers"</span><span class="p">,</span> <span class="s1">'rt'</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">number</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">list_of_numbers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">number</span><span class="p">)</span>
+
+    <span class="c1"># Print out debugging information for first element</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">list_of_numbers</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="k">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">list_of_numbers</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+
+    <span class="k">print</span><span class="p">(</span><span class="s2">"The sum is {total}"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">total</span><span class="o">=</span><span class="nb">sum</span><span class="p">(</span><span class="n">list_of_numbers</span><span class="p">)))</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span></pre></div><div class="step step-level-1" step="44" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="70400" data-y="0" data-z="0"><pre class="highlight ">craig@lister:~/projects/intro_debugging_python$ env/bin/python3 sum_of_numbers.py
+24601
+
+&lt;class 'str'&gt;
+Traceback (most recent call last):
+File "sum_of_numbers.py", line 14, in &lt;module&gt;
+    main()
+File "sum_of_numbers.py", line 11, in main
+    print("The sum is {total}".format(total=sum(list_of_numbers)))
+TypeError: unsupported operand type(s) for +: 'int' and 'str'</pre></div><div class="step step-level-1" step="45" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="72000" data-y="0" data-z="0"><h1 id="print-is-a-blunt-instrument"><tt>print()</tt> is a blunt instrument</h1></div><div class="step step-level-1" step="46" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="73600" data-y="0" data-z="0"><p>Even logging isn't of much help:</p><pre class="highlight code python"><span class="c1"># sum_of_numbers.py</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">)</span>
+
+    <span class="n">list_of_numbers</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">"list_of_numbers"</span><span class="p">,</span> <span class="s1">'rt'</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">number</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">list_of_numbers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">number</span><span class="p">)</span>
+
+    <span class="c1"># Print out debugging information for first element</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">list_of_numbers</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">list_of_numbers</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+
+    <span class="k">print</span><span class="p">(</span><span class="s2">"The sum is {total}"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">total</span><span class="o">=</span><span class="nb">sum</span><span class="p">(</span><span class="n">list_of_numbers</span><span class="p">)))</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span></pre></div><div class="step step-level-1" step="47" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="75200" data-y="0" data-z="0"><pre class="highlight ">craig@lister:~/projects/intro_debugging_python$ env/bin/python3 sum_of_numbers.py
+DEBUG:root:24601
+
+DEBUG:root:&lt;class 'str'&gt;
+Traceback (most recent call last):
+File "sum_of_numbers.py", line 19, in &lt;module&gt;
+    main()
+File "sum_of_numbers.py", line 16, in main
+    print("The sum is {total}".format(total=sum(list_of_numbers)))
+TypeError: unsupported operand type(s) for +: 'int' and 'str'
+craig@lister:~/projects/intro_debugging_python$</pre></div><div class="step step-level-1" step="48" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="76800" data-y="0" data-z="0"><h1 id="enter-the-debugger">Enter the debugger</h1></div><div class="step step-level-1" step="49" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="78400" data-y="0" data-z="0"><pre class="highlight ">craig@lister:~/projects/intro_debugging_python$ env/bin/python -m pdb sum_of_numbers.py
+&gt; /home/craig/projects/intro_debugging_python/sum_of_numbers.py(4)&lt;module&gt;()
+-&gt; def main():
+(Pdb) b 11
+Breakpoint 1 at /home/craig/projects/intro_debugging_python/sum_of_numbers.py:11
+(Pdb) l
+1   # sum_of_numbers.py
+2
+3
+4  -&gt;       def main():
+5
+6       list_of_numbers = []
+7       with open("list_of_numbers", 'rt') as f:
+8           for number in f:
+9               list_of_numbers.append(number)
+10
+11 B            print("The sum is {total}".format(total=sum(list_of_numbers)))
+(Pdb) c
+&gt; /home/craig/projects/intro_debugging_python/sum_of_numbers.py(11)main()
+-&gt; print("The sum is {total}".format(total=sum(list_of_numbers)))
+(Pdb)</pre></div><div class="step step-level-1" step="50" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="80000" data-y="0" data-z="0"><pre class="highlight ">craig@lister:~/projects/intro_debugging_python$ env/bin/python -m pdb sum_of_numbers.py
+&gt; /home/craig/projects/intro_debugging_python/sum_of_numbers.py(4)&lt;module&gt;()
+-&gt; def main():
+(Pdb) b 11
+Breakpoint 1 at /home/craig/projects/intro_debugging_python/sum_of_numbers.py:11
+(Pdb) l
+1   # sum_of_numbers.py
+2
+3
+4  -&gt;       def main():
+5
+6       list_of_numbers = []
+7       with open("list_of_numbers", 'rt') as f:
+8           for number in f:
+9               list_of_numbers.append(number)
+10
+11 B            print("The sum is {total}".format(total=sum(list_of_numbers)))
+(Pdb) c
+&gt; /home/craig/projects/intro_debugging_python/sum_of_numbers.py(11)main()
+-&gt; print("The sum is {total}".format(total=sum(list_of_numbers)))
+(Pdb) p list_of_numbers[0]
+'24601\n'
+(Pdb)</pre></div><div class="step step-level-1" step="51" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="81600" data-y="0" data-z="0"><h1 id="cheatsheet">Cheatsheet</h1><p><a href="https://github.com/nblock/pdb-cheatsheet">https://github.com/nblock/pdb-cheatsheet</a></p></div><div class="step step-level-1" step="52" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="83200" data-y="0" data-z="0"><img src="images/pdb-cheatsheet.png" width="1200px"></img></div><div class="step step-level-1" step="53" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="84800" data-y="0" data-z="0"><h1 id="invoking-the-debugger">Invoking the Debugger</h1></div><div class="step step-level-1" step="54" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="86400" data-y="0" data-z="0"><ul><li><tt>python -m pdb</tt> <em>filename.py</em></li><li><em>In the sourcecode itself:</em><ul><li><tt>import pdb;pdb.set_trace()</tt></li></ul></li></ul></div><div class="step step-level-1" step="55" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="88000" data-y="0" data-z="0"><pre class="highlight code python"><span class="c1"># sum_of_numbers.py</span>
+
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+
+    <span class="n">list_of_numbers</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">"list_of_numbers"</span><span class="p">,</span> <span class="s1">'rt'</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">number</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">list_of_numbers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">number</span><span class="p">)</span>
+
+    <span class="c1"># Start the debugger here</span>
+    <span class="kn">import</span> <span class="nn">pdb</span>
+    <span class="n">pdb</span><span class="o">.</span><span class="n">set_trace</span><span class="p">()</span>
+
+    <span class="k">print</span><span class="p">(</span><span class="s2">"The sum is {total}"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">total</span><span class="o">=</span><span class="nb">sum</span><span class="p">(</span><span class="n">list_of_numbers</span><span class="p">)))</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span></pre></div><div class="step step-level-1" step="56" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="89600" data-y="0" data-z="0"><pre class="highlight ">craig@lister:~/projects/intro_debugging_python$ env/bin/python3 sum_of_numbers.py
+&gt; /home/craig/projects/intro_debugging_python/sum_of_numbers.py(14)main()
+-&gt; print("The sum is {total}".format(total=sum(list_of_numbers)))
+(Pdb)</pre></div><div class="step step-level-1" step="57" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="91200" data-y="0" data-z="0"><h1 id="ok-back-to-debugging-the-code">OK, back to debugging the code...</h1></div><div class="step step-level-1" step="58" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="92800" data-y="0" data-z="0"><pre class="highlight code python"><span class="c1"># sum_of_numbers.py</span>
+
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+
+    <span class="kn">import</span> <span class="nn">pdb</span>
+    <span class="n">pdb</span><span class="o">.</span><span class="n">set_trace</span><span class="p">()</span>
+
+    <span class="n">list_of_numbers</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">"list_of_numbers"</span><span class="p">,</span> <span class="s1">'rt'</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">number</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
+            <span class="c1"># Convert input to an integer</span>
+            <span class="n">list_of_numbers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">number</span><span class="p">))</span>
+
+    <span class="k">print</span><span class="p">(</span><span class="s2">"The sum is {total}"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">total</span><span class="o">=</span><span class="nb">sum</span><span class="p">(</span><span class="n">list_of_numbers</span><span class="p">)))</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span></pre><p>We convert <tt>number</tt> to an integer...</p></div><div class="step step-level-1" step="59" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="94400" data-y="0" data-z="0"><pre class="highlight ">craig@lister:~/projects/intro_debugging_python$ env/bin/python3 integer_sum_of_numbers.py
+&gt; /home/craig/projects/intro_debugging_python/integer_sum_of_numbers.py(9)main()
+-&gt; list_of_numbers = []
+(Pdb) c
+Traceback (most recent call last):
+File "integer_sum_of_numbers.py", line 18, in &lt;module&gt;
+    main()
+File "integer_sum_of_numbers.py", line 9, in main
+    list_of_numbers = []
+ValueError: invalid literal for int() with base 10: 'Bob\n'</pre></div><div class="step step-level-1" step="60" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="96000" data-y="0" data-z="0"><h1 id="what-the">What the @#$%?!</h1></div><div class="step step-level-1" step="61" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="97600" data-y="0" data-z="0"><h1 id="conditional-breakpoint">Conditional Breakpoint</h1></div><div class="step step-level-1" step="62" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="99200" data-y="0" data-z="0"><pre class="highlight ">(Pdb) b 13, number == 'Bob\n'
+Breakpoint 1 at /home/craig/projects/intro_debugging_python/integer_sum_of_numbers.py:13
+(Pdb) c
+&gt; /home/craig/projects/intro_debugging_python/integer_sum_of_numbers.py(13)main()
+-&gt; list_of_numbers.append(int(number))
+(Pdb) p number
+'Bob\n'
+(Pdb) l
+8
+9       list_of_numbers = []
+10              with open("list_of_numbers", 'rt') as f:
+11                  for number in f:
+12                      # Convert input to an integer
+13 B-&gt;                  list_of_numbers.append(int(number))
+14
+15              print("The sum is {total}".format(total=sum(list_of_numbers)))
+16
+17          if __name__ == "__main__":
+18              main()
+(Pdb)</pre></div><div class="step step-level-1" step="63" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="100800" data-y="0" data-z="0"><h1 id="someone-left-a-stray-bob-in-the-data">Someone left a stray "Bob" in the data</h1></div><div class="step step-level-1" step="64" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="102400" data-y="0" data-z="0"><p>(Dammit Bob, get out of the data)</p></div><div class="step step-level-1" step="65" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="104000" data-y="0" data-z="0"><h1 id="so-how-do-we-work-around-this">So, how do we work around this?</h1></div><div class="step step-level-1" step="66" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="105600" data-y="0" data-z="0"><h1 id="id2">One approach...</h1></div><div class="step step-level-1" step="67" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="107200" data-y="0" data-z="0"><pre class="highlight code python"><span class="c1"># sum_of_numbers.py</span>
+
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+
+    <span class="kn">import</span> <span class="nn">pdb</span>
+    <span class="n">pdb</span><span class="o">.</span><span class="n">set_trace</span><span class="p">()</span>
+
+    <span class="n">list_of_numbers</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">"list_of_numbers"</span><span class="p">,</span> <span class="s1">'rt'</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">number</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="c1"># Convert input to an integer</span>
+                <span class="n">list_of_numbers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">number</span><span class="p">))</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="k">pass</span>
+
+    <span class="k">print</span><span class="p">(</span><span class="s2">"The sum is {total}"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">total</span><span class="o">=</span><span class="nb">sum</span><span class="p">(</span><span class="n">list_of_numbers</span><span class="p">)))</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span></pre></div><div class="step step-level-1" step="68" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="108800" data-y="0" data-z="0"><pre class="highlight ">craig@lister:~/projects/intro_debugging_python$ env/bin/python3 integer_sum_of_numbers.py
+&gt; /home/craig/projects/intro_debugging_python/integer_sum_of_numbers.py(9)main()
+-&gt; list_of_numbers = []
+(Pdb) c
+The sum is 30009298902</pre></div><div class="step step-level-1" step="69" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="110400" data-y="0" data-z="0"><h1 id="let-s-do-one-better">Let's do one better...</h1></div><div class="step step-level-1" step="70" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="112000" data-y="0" data-z="0"><pre class="highlight code python"><span class="c1"># sum_of_numbers.py</span>
+
+<span class="kn">import</span> <span class="nn">logging</span>
+
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+
+    <span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
+    <span class="n">list_of_numbers</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">"list_of_numbers"</span><span class="p">,</span> <span class="s1">'rt'</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">number</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="c1"># Convert input to an integer</span>
+                <span class="n">list_of_numbers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">number</span><span class="p">))</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"Received non-integer input"</span><span class="p">)</span>
+                <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">number</span><span class="p">)</span>
+
+    <span class="k">print</span><span class="p">(</span><span class="s2">"The sum is {total}"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">total</span><span class="o">=</span><span class="nb">sum</span><span class="p">(</span><span class="n">list_of_numbers</span><span class="p">)))</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span></pre></div><div class="step step-level-1" step="71" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="113600" data-y="0" data-z="0"><pre class="highlight ">craig@lister:~/projects/intro_debugging_python$ env/bin/python3 integer_sum_of_numbers.py
+WARNING:root:Received non-integer input
+WARNING:root:Bob
+
+The sum is 30009298902</pre></div><div class="step step-level-1" step="72" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="115200" data-y="0" data-z="0"><h1 id="now-we-re-logging-a-warning-whenever-we-get-non-integer-data">Now we're logging a warning whenever we get non-integer data</h1></div><div class="step step-level-1" step="73" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="116800" data-y="0" data-z="0"><p>(Thanks a lot, Bob)</p></div><div class="step step-level-1" step="74" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="118400" data-y="0" data-z="0"><h1 id="so-what-have-we-learned">So, what have we learned?</h1></div><div class="step step-level-1" step="75" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="120000" data-y="0" data-z="0"><p>What we've learned:</p><ul><li>We can invoke the Python Debugger on our code<ul><li><tt>python3 -m pdb</tt> <em>filename.py</em></li><li><tt>import pdb;pdb.set_trace()</tt></li></ul></li><li>We can set breakpoints in our code</li><li>We can use conditionals for breakpoints</li></ul></div><div class="step step-level-1" step="76" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="121600" data-y="0" data-z="0"><h1 id="let-s-look-more-at-debugging-real-computer-code">Let's look more at debugging real computer code...</h1></div><div class="step step-level-1" step="77" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="123200" data-y="0" data-z="0"><pre class="highlight code python"><span class="k">def</span> <span class="nf">fib</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">1</span>
+    <span class="k">elif</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">0</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">fib</span><span class="p">(</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">fib</span><span class="p">(</span><span class="n">n</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">fib</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">'__main__'</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span></pre></div><div class="step step-level-1" step="78" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="124800" data-y="0" data-z="0"><p>Let's see what this code does...</p></div><div class="step step-level-1" step="79" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="126400" data-y="0" data-z="0"><pre class="highlight ">craig@bluemidget:~/projects/intro_debugging_python$ python3 -m pdb fib.py
+&gt; /home/craig/projects/intro_debugging_python/fib.py(1)&lt;module&gt;()
+-&gt; def fib(n):
+(Pdb) b 7
+Breakpoint 1 at /home/craig/projects/intro_debugging_python/fib.py:7
+(Pdb) ll
+1  -&gt; def fib(n):
+2         if n == 1:
+3             return 1
+4         elif n == 0:
+5             return 0
+6         else:
+7 B           return fib(n-1) + fib(n-2)
+8
+9
+10     def main():
+11         print(fib(10))
+12
+13
+14     if __name__ == '__main__':
+15         main()</pre></div><div class="step step-level-1" step="80" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="128000" data-y="0" data-z="0"><h1 id="repetitious-commands-around-breakpoints">Repetitious commands around breakpoints...</h1></div><div class="step step-level-1" step="81" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="129600" data-y="0" data-z="0"><p>Wouldn't it be nice to see the call stack and the current arguments of the current method call?</p><pre class="highlight ">(Pdb) commands 1
+(com) bt
+(com) args
+(com) end
+(Pdb)</pre></div><div class="step step-level-1" step="82" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="131200" data-y="0" data-z="0"><pre class="highlight ">(Pdb) b 5
+Breakpoint 2 at /home/craig/projects/intro_debugging_python/fib.py:5
+(Pdb) commands 2
+(com) bt
+(com) end
+(Pdb) b 3
+Breakpoint 3 at /home/craig/projects/intro_debugging_python/fib.py:3
+(Pdb) commands 3
+(com) bt
+(com) end</pre></div><div class="step step-level-1" step="83" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="132800" data-y="0" data-z="0"><pre class="highlight ">(Pdb) ll
+1  -&gt;       def fib(n):
+2       if n == 1:
+3 B         return 1
+4       elif n == 0:
+5 B         return 0
+6       else:
+7 B         return fib(n-1) + fib(n-2)
+8
+9
+10          def main():
+11              print(fib(10))
+12
+13
+14          if __name__ == '__main__':
+15              main()</pre></div><div class="step step-level-1" step="84" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="134400" data-y="0" data-z="0"><pre class="highlight ">(Pdb) b
+Num Type         Disp Enb   Where
+1   breakpoint   keep yes   at /home/craig/projects/intro_debugging_python/fib.py:7
+2   breakpoint   keep yes   at /home/craig/projects/intro_debugging_python/fib.py:3
+3   breakpoint   keep yes   at /home/craig/projects/intro_debugging_python/fib.py:5</pre></div><div class="step step-level-1" step="85" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="136000" data-y="0" data-z="0"><pre class="highlight ">(Pdb) c
+/usr/lib/python3.4/bdb.py(431)run()
+-&gt; exec(cmd, globals, locals)
+&lt;string&gt;(1)&lt;module&gt;()
+/home/craig/projects/intro_debugging_python/fib.py(15)&lt;module&gt;()
+-&gt; main()
+/home/craig/projects/intro_debugging_python/fib.py(11)main()
+-&gt; print(fib(10))
+&gt; /home/craig/projects/intro_debugging_python/fib.py(7)fib()
+-&gt; return fib(n-1) + fib(n-2)
+n = 10
+&gt; /home/craig/projects/intro_debugging_python/fib.py(7)fib()
+-&gt; return fib(n-1) + fib(n-2)
+(Pdb) l
+2       if n == 1:
+3           return 1
+4       elif n == 0:
+5           return 0
+6       else:
+7 B-&gt;               return fib(n-1) + fib(n-2)
+8
+9
+10          def main():
+11              print(fib(10))
+12</pre></div><div class="step step-level-1" step="86" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="137600" data-y="0" data-z="0"><h1 id="time-passes">Time passes...</h1></div><div class="step step-level-1" step="87" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="139200" data-y="0" data-z="0"><pre class="highlight ">(Pdb) c
+/usr/lib/python3.4/bdb.py(431)run()
+-&gt; exec(cmd, globals, locals)
+&lt;string&gt;(1)&lt;module&gt;()
+/home/craig/projects/intro_debugging_python/fib.py(15)&lt;module&gt;()
+-&gt; main()
+/home/craig/projects/intro_debugging_python/fib.py(11)main()
+-&gt; print(fib(10))
+/home/craig/projects/intro_debugging_python/fib.py(7)fib()
+-&gt; return fib(n-1) + fib(n-2)
+...
+-&gt; return fib(n-1) + fib(n-2)
+&gt; /home/craig/projects/intro_debugging_python/fib.py(7)fib()
+-&gt; return fib(n-1) + fib(n-2)
+n = 2
+&gt; /home/craig/projects/intro_debugging_python/fib.py(7)fib()
+-&gt; return fib(n-1) + fib(n-2)
+(Pdb) c</pre></div><div class="step step-level-1" step="88" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="140800" data-y="0" data-z="0"><pre class="highlight ">(Pdb) c
+/usr/lib/python3.4/bdb.py(431)run()
+-&gt; exec(cmd, globals, locals)
+&lt;string&gt;(1)&lt;module&gt;()
+/home/craig/projects/intro_debugging_python/fib.py(15)&lt;module&gt;()
+-&gt; main()
+/home/craig/projects/intro_debugging_python/fib.py(11)main()
+-&gt; print(fib(10))
+/home/craig/projects/intro_debugging_python/fib.py(7)fib()
+-&gt; return fib(n-1) + fib(n-2)
+...
+ /home/craig/projects/intro_debugging_python/fib.py(7)fib()
+-&gt; return fib(n-1) + fib(n-2)
+&gt; /home/craig/projects/intro_debugging_python/fib.py(3)fib()
+-&gt; return 1
+&gt; /home/craig/projects/intro_debugging_python/fib.py(3)fib()
+-&gt; return 1</pre></div><div class="step step-level-1" step="89" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="142400" data-y="0" data-z="0"><pre class="highlight ">(Pdb) c
+/usr/lib/python3.4/bdb.py(431)run()
+-&gt; exec(cmd, globals, locals)
+&lt;string&gt;(1)&lt;module&gt;()
+/home/craig/projects/intro_debugging_python/fib.py(15)&lt;module&gt;()
+-&gt; main()
+/home/craig/projects/intro_debugging_python/fib.py(11)main()
+-&gt; print(fib(10))
+/home/craig/projects/intro_debugging_python/fib.py(7)fib()
+-&gt; return fib(n-1) + fib(n-2)
+...
+/home/craig/projects/intro_debugging_python/fib.py(7)fib()
+-&gt; return fib(n-1) + fib(n-2)
+&gt; /home/craig/projects/intro_debugging_python/fib.py(5)fib()
+-&gt; return 0
+&gt; /home/craig/projects/intro_debugging_python/fib.py(5)fib()
+-&gt; return 0</pre></div><div class="step step-level-1" step="90" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="144000" data-y="0" data-z="0"><h1 id="demo">Demo...</h1></div><div class="step step-level-1" step="91" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="145600" data-y="0" data-z="0"><h1 id="id3">What we learned...</h1></div><div class="step step-level-1" step="92" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="147200" data-y="0" data-z="0"><p>What we learned...</p><ul><li>Breakpoints can have commands associated with them using <tt>commands</tt> <em>&lt;breakpoint number&gt;</em></li><li><tt>args</tt> displays the arguments passed to the method</li><li><tt>bt</tt> and <tt>where</tt> show the stack trace</li><li><tt>c</tt> continues after reaching a break point</li><li><tt>u</tt> and <tt>d</tt> move up and down the stack (demo)</li></ul></div><div class="step step-level-1" step="93" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="148800" data-y="0" data-z="0"><h1 id="a-few-more-commands">A few more commands...</h1></div><div class="step step-level-1" step="94" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="150400" data-y="0" data-z="0"><pre class="highlight code python"><span class="k">def</span> <span class="nf">pointless_loop</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+
+    <span class="n">number_sum</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="c1"># This is a pointless loop</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
+        <span class="n">number_sum</span> <span class="o">+=</span> <span class="n">i</span>
+
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="n">pointless_loop</span><span class="p">(</span><span class="mi">30</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">'__main__'</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span></pre></div><div class="step step-level-1" step="95" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="152000" data-y="0" data-z="0"><h1 id="id4">Conditional breakpoint...</h1></div><div class="step step-level-1" step="96" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="153600" data-y="0" data-z="0"><p><tt>b</tt> <em>&lt;linenum&gt;</em> <tt>,</tt> <em>&lt;condition&gt;</em></p><p><tt>b 6, number_sum &gt; 100</tt></p></div><div class="step step-level-1" step="97" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="155200" data-y="0" data-z="0"><pre class="highlight ">craig@bluemidget:~/projects/intro_debugging_python$ python3 -m pdb pointless_loop.py
+&gt; /home/craig/projects/intro_debugging_python/pointless_loop.py(1)&lt;module&gt;()
+-&gt; def pointless_loop(n):
+(Pdb) ll
+1  -&gt;       def pointless_loop(n):
+2
+3       number_sum = 0
+4       # This is a pointless loop
+5       for i in range(1, n+1):
+6           number_sum += i
+...
+(Pdb) b 6, number_sum &gt; 100
+Breakpoint 1 at /home/craig/projects/intro_debugging_python/pointless_loop.py:6
+(Pdb) commands 1
+(com) pp i
+(com) pp number_sum
+(com) end
+(Pdb) c
+15
+105
+&gt; /home/craig/projects/intro_debugging_python/pointless_loop.py(6)pointless_loop()
+-&gt; number_sum += i</pre></div><div class="step step-level-1" step="98" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="156800" data-y="0" data-z="0"><pre class="highlight ">&gt; /home/craig/projects/intro_debugging_python/pointless_loop.py(6)pointless_loop()
+-&gt; number_sum += i
+(Pdb) c
+16
+120
+&gt; /home/craig/projects/intro_debugging_python/pointless_loop.py(6)pointless_loop()
+-&gt; number_sum += i
+(Pdb) c
+17
+136
+&gt; /home/craig/projects/intro_debugging_python/pointless_loop.py(6)pointless_loop()
+-&gt; number_sum += i
+(Pdb) b
+Num Type         Disp Enb   Where
+1   breakpoint   keep yes   at /home/craig/projects/intro_debugging_python/pointless_loop.py:6
+    stop only if number_sum &gt; 100
+    breakpoint already hit 17 times</pre></div><div class="step step-level-1" step="99" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="158400" data-y="0" data-z="0"><h1 id="disabling-breakpoints">Disabling Breakpoints...</h1></div><div class="step step-level-1" step="100" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="160000" data-y="0" data-z="0"><p><tt>disable</tt> <em>&lt;breakpoint number&gt;</em></p><p><tt>disable 1</tt></p></div><div class="step step-level-1" step="101" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="161600" data-y="0" data-z="0"><pre class="highlight ">&gt; /home/craig/projects/intro_debugging_python/pointless_loop.py(6)pointless_loop()
+-&gt; number_sum += i
+(Pdb) c
+22
+231
+&gt; /home/craig/projects/intro_debugging_python/pointless_loop.py(6)pointless_loop()
+-&gt; number_sum += i
+(Pdb) c
+23
+253
+&gt; /home/craig/projects/intro_debugging_python/pointless_loop.py(6)pointless_loop()
+-&gt; number_sum += i
+(Pdb) disable 1
+Disabled breakpoint 1 at /home/craig/projects/intro_debugging_python/pointless_loop.py:6
+(Pdb) b
+Num Type         Disp Enb   Where
+1   breakpoint   keep no    at /home/craig/projects/intro_debugging_python/pointless_loop.py:6
+    stop only if number_sum &gt; 100
+    breakpoint already hit 23 times</pre></div><div class="step step-level-1" step="102" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="163200" data-y="0" data-z="0"><p>Temporary Breakpoints...</p></div><div class="step step-level-1" step="103" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="164800" data-y="0" data-z="0"><pre class="highlight ">(Pdb) tbreak 6, number_sum &gt; 100
+Breakpoint 1 at /home/craig/projects/intro_debugging_python/pointless_loop.py:6
+(Pdb) l
+1  -&gt;       def pointless_loop(n):
+2
+3       number_sum = 0
+4       # This is a pointless loop
+5       for i in range(1, n+1):
+6 B         number_sum += i
+...
+(Pdb) b
+Num Type         Disp Enb   Where
+1   breakpoint   del  yes   at /home/craig/projects/intro_debugging_python/pointless_loop.py:6
+    stop only if number_sum &gt; 100
+(Pdb) c
+Deleted breakpoint 1 at /home/craig/projects/intro_debugging_python/pointless_loop.py:6
+&gt; /home/craig/projects/intro_debugging_python/pointless_loop.py(6)pointless_loop()
+-&gt; number_sum += i
+(Pdb) pp number_sum
+105
+(Pdb) b
+(Pdb)</pre></div><div class="step step-level-1" step="104" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="166400" data-y="0" data-z="0"><h1 id="python3-debugging-goodies">Python3 Debugging Goodies...</h1></div><div class="step step-level-1" step="105" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="168000" data-y="0" data-z="0"><h1 id="display">Display</h1></div><div class="step step-level-1" step="106" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="169600" data-y="0" data-z="0"><pre class="highlight ">&gt; /home/craig/projects/intro_debugging_python/pointless_loop.py(1)&lt;module&gt;()
+-&gt; def pointless_loop(n):
+(Pdb) n
+&gt; /home/craig/projects/intro_debugging_python/pointless_loop.py(9)&lt;module&gt;()
+-&gt; def main():
+(Pdb) n
+&gt; /home/craig/projects/intro_debugging_python/pointless_loop.py(12)&lt;module&gt;()
+-&gt; if __name__ == '__main__':
+(Pdb) n
+&gt; /home/craig/projects/intro_debugging_python/pointless_loop.py(13)&lt;module&gt;()
+-&gt; main()
+(Pdb) s
+--Call--
+&gt; /home/craig/projects/intro_debugging_python/pointless_loop.py(9)main()
+-&gt; def main():
+(Pdb) n</pre></div><div class="step step-level-1" step="107" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="171200" data-y="0" data-z="0"><blockquote><pre class="highlight ">&gt; /home/craig/projects/intro_debugging_python/pointless_loop.py(10)main()
+-&gt; pointless_loop(30)
+(Pdb) s
+--Call--
+&gt; /home/craig/projects/intro_debugging_python/pointless_loop.py(1)pointless_loop()
+-&gt; def pointless_loop(n):
+(Pdb) display number_sum
+display number_sum: ** raised NameError: name 'number_sum' is not defined **
+(Pdb) n
+&gt; /home/craig/projects/intro_debugging_python/pointless_loop.py(3)pointless_loop()
+-&gt; number_sum = 0
+(Pdb) n
+&gt; /home/craig/projects/intro_debugging_python/pointless_loop.py(5)pointless_loop()
+-&gt; for i in range(1, n+1):
+display number_sum: 0  [old: ** raised NameError: name 'number_sum' is not defined **]
+(Pdb)</pre></blockquote></div><div class="step step-level-1" step="108" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="172800" data-y="0" data-z="0"><pre class="highlight ">(Pdb) n
+&gt; /home/craig/projects/intro_debugging_python/pointless_loop.py(6)pointless_loop()
+-&gt; number_sum += i
+(Pdb) n
+&gt; /home/craig/projects/intro_debugging_python/pointless_loop.py(5)pointless_loop()
+-&gt; for i in range(1, n+1):
+display number_sum: 1  [old: 0]
+(Pdb) n
+&gt; /home/craig/projects/intro_debugging_python/pointless_loop.py(6)pointless_loop()
+-&gt; number_sum += i
+(Pdb) n
+&gt; /home/craig/projects/intro_debugging_python/pointless_loop.py(5)pointless_loop()
+-&gt; for i in range(1, n+1):
+display number_sum: 3  [old: 1]
+(Pdb) n
+&gt; /home/craig/projects/intro_debugging_python/pointless_loop.py(6)pointless_loop()
+-&gt; number_sum += i
+(Pdb) n
+&gt; /home/craig/projects/intro_debugging_python/pointless_loop.py(5)pointless_loop()
+-&gt; for i in range(1, n+1):
+display number_sum: 6  [old: 3]
+(Pdb) n</pre></div><div class="step step-level-1" step="109" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="174400" data-y="0" data-z="0"><h1 id="pdb">Pdb++</h1><p><a href="https://pypi.python.org/pypi/pdbpp/">https://pypi.python.org/pypi/pdbpp/</a></p></div><div class="step step-level-1" step="110" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="176000" data-y="0" data-z="0"><h1 id="id5">Demo...</h1></div><div class="step step-level-1" step="111" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="177600" data-y="0" data-z="0"><h1 id="helpful-links">Helpful links...</h1></div><div class="step step-level-1" step="112" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="179200" data-y="0" data-z="0"><p>Pdb Debugger:</p><ul><li><a href="https://pymotw.com/3/pdb/">https://pymotw.com/3/pdb/</a></li><li><a href="https://github.com/nblock/pdb-cheatsheet">https://github.com/nblock/pdb-cheatsheet</a></li><li><a href="https://docs.python.org/3/library/pdb.html">https://docs.python.org/3/library/pdb.html</a></li></ul><p>Logging:</p><ul><li><a href="https://pymotw.com/3/logging/">https://pymotw.com/3/logging/</a></li><li><a href="https://docs.python.org/3/library/logging.html">https://docs.python.org/3/library/logging.html</a></li></ul><p>Pdb++:</p><ul><li><a href="https://pypi.python.org/pypi/pdbpp/">https://pypi.python.org/pypi/pdbpp/</a></li></ul></div><div class="step step-level-1" step="113" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="180800" data-y="0" data-z="0"><h1 id="questions">Questions?</h1></div><div class="step step-level-1" step="114" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="182400" data-y="0" data-z="0"><h1 id="thank-you">Thank you!</h1></div><div class="step step-level-1" step="115" data-rotate-x="0" data-rotate-y="0" data-rotate-z="0" data-scale="1" data-x="184000" data-y="0" data-z="0"><h1 id="id6">Introduction to Debugging in Python</h1><ul><li>Author: Craig Maloney</li><li>Email: <a href="mailto:craig@decafbad.net">craig@decafbad.net</a></li><li>Website: <a href="http://decafbad.nety">http://decafbad.nety</a></li><li>Presented: 2017-04-11</li></ul></div></div><div id="hovercraft-help"><table><tr><th>Space</th><td>Forward</td></tr><tr><th>Right, Down, Page Down</th><td>Next slide</td></tr><tr><th>Left, Up, Page Up</th><td>Previous slide</td></tr><tr><th>P</th><td>Open presenter console</td></tr><tr><th>H</th><td>Toggle this help</td></tr></table></div><script type="text/javascript" src="js/impress.js"></script><script type="text/javascript" src="js/impressConsole.js"></script><script type="text/javascript" src="js/hovercraft.js"></script></body></html>
