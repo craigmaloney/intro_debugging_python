@@ -29,9 +29,18 @@ Programming leads to bugs
 .. image:: images/Commodore_Grace_M._Hopper,_USN_(covered).jpg
     :width: 600px
 
+.. note::
+
+    Grace Brewster Murray Hopper, credited with the first literal computer bug, found in the Mark II computer.
+
 ----
 
 .. image:: images/H96566k.jpg
+
+.. note::
+
+    While she was working on a Mark II Computer at a US Navy research lab in Dahlgren, Virginia in 1947, her associates discovered a moth stuck in a relay impeding its operation. While neither Hopper nor her crew mentioned the phrase "debugging" in their logs, the case was held as an instance of literal "debugging", perhaps the first in history. The term bug had been in use for many years in engineering.[60][61] The remains of the moth can be found in the group's log book at the Smithsonian Institution's National Museum of American History in Washington, D.C.[62]
+
 
 ----
 
@@ -111,8 +120,8 @@ When we run this nothing is displayed.
 
 ----
 
-The lowly print() statement
-===========================
+The lowly ``print()`` statement
+===============================
 
 ----
 
@@ -292,6 +301,54 @@ Using logging gives us the ability to:
     craig@lister:~/projects/intro_debugging_python$ python example4.py
     INFO:root:Beginning program
     INFO:root:End program
+
+----
+
+::
+
+    craig@lister:~/projects/intro_debugging_python$ git diff example4.py
+    diff --git a/example4.py b/example4.py
+    index 8b75c70..08824ee 100644
+    --- a/example4.py
+    +++ b/example4.py
+    @@ -4,7 +4,7 @@ import logging
+    # Example 4
+    def main():
+    
+    -    logging.basicConfig(level=logging.INFO)
+    +    logging.basicConfig(level=logging.DEBUG)
+    
+        logging.info("Beginning program")
+
+----
+
+::
+
+    craig@lister:~/projects/intro_debugging_python$ python3 example4.py 
+    INFO:root:Beginning program
+    DEBUG:root:Beginning Loop
+    DEBUG:root:0.25
+    DEBUG:root:0.5
+    DEBUG:root:0.75
+    DEBUG:root:1.0
+    DEBUG:root:1.25
+    DEBUG:root:1.5
+    DEBUG:root:1.75
+    DEBUG:root:2.0
+    DEBUG:root:2.25
+    DEBUG:root:2.5
+    DEBUG:root:2.75
+    DEBUG:root:3.0
+    DEBUG:root:3.25
+    DEBUG:root:3.5
+    DEBUG:root:3.75
+    DEBUG:root:4.0
+    DEBUG:root:4.25
+    DEBUG:root:4.5
+    DEBUG:root:4.75
+    DEBUG:root:End Loop
+    INFO:root:End program
+
 
 
 ----
