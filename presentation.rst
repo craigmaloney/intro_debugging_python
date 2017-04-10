@@ -860,7 +860,12 @@ Let's see what this code does...
     14     if __name__ == '__main__':
     15         main()
 
----
+----
+
+Replicating the ``watch`` command from ``gdb``
+==============================================
+
+----
 
 ::
 
@@ -869,4 +874,34 @@ Let's see what this code does...
 (com) args
 (com) end
 (Pdb)
+
+----
+
+::
+
+    (Pdb) c
+    /usr/lib/python3.4/bdb.py(431)run()
+    -> exec(cmd, globals, locals)
+    <string>(1)<module>()
+    /home/craig/projects/intro_debugging_python/fib.py(15)<module>()
+    -> main()
+    /home/craig/projects/intro_debugging_python/fib.py(11)main()
+    -> print(fib(10))
+    > /home/craig/projects/intro_debugging_python/fib.py(7)fib()
+    -> return fib(n-1) + fib(n-2)
+    n = 10
+    > /home/craig/projects/intro_debugging_python/fib.py(7)fib()
+    -> return fib(n-1) + fib(n-2)
+    (Pdb) l
+    2  	    if n == 1:
+    3  	        return 1
+    4  	    elif n == 0:
+    5  	        return 0
+    6  	    else:
+    7 B->	        return fib(n-1) + fib(n-2)
+    8  	
+    9  	
+    10  	def main():
+    11  	    print(fib(10))
+    12  	
 
