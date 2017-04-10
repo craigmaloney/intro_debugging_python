@@ -11,6 +11,7 @@ Introduction to Debugging in Python
 
 * Author: Craig Maloney
 * Email: craig@decafbad.net
+* Website: http://decafbad.nety
 * Presented: 2017-04-11
 
 ----
@@ -869,11 +870,57 @@ Replicating the ``watch`` command from ``gdb``
 
 ::
 
-(Pdb) commands 1
-(com) bt
-(com) args
-(com) end
-(Pdb)
+    (Pdb) commands 1
+    (com) bt
+    (com) args
+    (com) end
+    (Pdb)
+
+----
+
+::
+
+    (Pdb) b 5
+    Breakpoint 2 at /home/craig/projects/intro_debugging_python/fib.py:5
+    (Pdb) commands 2
+    (com) bt
+    (com) end
+    (Pdb) b 3
+    Breakpoint 3 at /home/craig/projects/intro_debugging_python/fib.py:3
+    (Pdb) commands 3
+    (com) bt
+    (com) end
+    
+----
+
+::
+
+    (Pdb) ll
+    1  ->	def fib(n):
+    2  	    if n == 1:
+    3 B	        return 1
+    4  	    elif n == 0:
+    5 B	        return 0
+    6  	    else:
+    7 B	        return fib(n-1) + fib(n-2)
+    8  	
+    9  	
+    10  	def main():
+    11  	    print(fib(10))
+    12  	
+    13  	
+    14  	if __name__ == '__main__':
+    15  	    main()
+
+----
+
+::
+
+    (Pdb) b
+    Num Type         Disp Enb   Where
+    1   breakpoint   keep yes   at /home/craig/projects/intro_debugging_python/fib.py:7
+    2   breakpoint   keep yes   at /home/craig/projects/intro_debugging_python/fib.py:3
+    3   breakpoint   keep yes   at /home/craig/projects/intro_debugging_python/fib.py:5
 
 ----
 
@@ -905,3 +952,300 @@ Replicating the ``watch`` command from ``gdb``
     11  	    print(fib(10))
     12  	
 
+----
+
+Time passes...
+==============
+
+----
+
+::
+
+    (Pdb) c
+    /usr/lib/python3.4/bdb.py(431)run()
+    -> exec(cmd, globals, locals)
+    <string>(1)<module>()
+    /home/craig/projects/intro_debugging_python/fib.py(15)<module>()
+    -> main()
+    /home/craig/projects/intro_debugging_python/fib.py(11)main()
+    -> print(fib(10))
+    /home/craig/projects/intro_debugging_python/fib.py(7)fib()
+    -> return fib(n-1) + fib(n-2)
+    ...
+    -> return fib(n-1) + fib(n-2)
+    > /home/craig/projects/intro_debugging_python/fib.py(7)fib()
+    -> return fib(n-1) + fib(n-2)
+    n = 2
+    > /home/craig/projects/intro_debugging_python/fib.py(7)fib()
+    -> return fib(n-1) + fib(n-2)
+    (Pdb) c
+
+----
+
+::
+
+    (Pdb) c
+    /usr/lib/python3.4/bdb.py(431)run()
+    -> exec(cmd, globals, locals)
+    <string>(1)<module>()
+    /home/craig/projects/intro_debugging_python/fib.py(15)<module>()
+    -> main()
+    /home/craig/projects/intro_debugging_python/fib.py(11)main()
+    -> print(fib(10))
+    /home/craig/projects/intro_debugging_python/fib.py(7)fib()
+    -> return fib(n-1) + fib(n-2)
+    ...
+     /home/craig/projects/intro_debugging_python/fib.py(7)fib()
+    -> return fib(n-1) + fib(n-2)
+    > /home/craig/projects/intro_debugging_python/fib.py(3)fib()
+    -> return 1
+    > /home/craig/projects/intro_debugging_python/fib.py(3)fib()
+    -> return 1
+
+----
+
+::
+
+    (Pdb) c
+    /usr/lib/python3.4/bdb.py(431)run()
+    -> exec(cmd, globals, locals)
+    <string>(1)<module>()
+    /home/craig/projects/intro_debugging_python/fib.py(15)<module>()
+    -> main()
+    /home/craig/projects/intro_debugging_python/fib.py(11)main()
+    -> print(fib(10))
+    /home/craig/projects/intro_debugging_python/fib.py(7)fib()
+    -> return fib(n-1) + fib(n-2)
+    ...
+    /home/craig/projects/intro_debugging_python/fib.py(7)fib()
+    -> return fib(n-1) + fib(n-2)
+    > /home/craig/projects/intro_debugging_python/fib.py(5)fib()
+    -> return 0
+    > /home/craig/projects/intro_debugging_python/fib.py(5)fib()
+    -> return 0
+
+----
+
+Demo...
+=======
+
+----
+
+What we learned...
+==================
+
+----
+
+What we learned...
+
+* Breakpoints can have commands associated with them using ``commands`` *<breakpoint number>*
+* ``args`` displays the arguments passed to the method
+* ``bt`` and ``where`` show the stack trace
+* ``c`` continues after reaching a break point
+* ``u`` and ``d`` move up and down the stack (demo)
+
+----
+
+A few more commands...
+======================
+
+----
+
+.. code:: python
+
+    def pointless_loop(n):
+
+        number_sum = 0
+        # This is a pointless loop
+        for i in range(1, n+1):
+            number_sum += i
+
+
+    def main():
+        pointless_loop(30)
+
+    if __name__ == '__main__':
+        main()
+
+----
+
+Conditional breakpoint...
+=========================
+
+----
+
+``b`` *<linenum>* ``,`` *<condition>*
+
+``b 6, number_sum > 100``
+
+----
+
+::
+
+    craig@bluemidget:~/projects/intro_debugging_python$ python3 -m pdb pointless_loop.py 
+    > /home/craig/projects/intro_debugging_python/pointless_loop.py(1)<module>()
+    -> def pointless_loop(n):
+    (Pdb) ll
+    1  ->	def pointless_loop(n):
+    2  	
+    3  	    number_sum = 0
+    4  	    # This is a pointless loop
+    5  	    for i in range(1, n+1):
+    6  	        number_sum += i
+    ...
+    (Pdb) b 6, number_sum > 100
+    Breakpoint 1 at /home/craig/projects/intro_debugging_python/pointless_loop.py:6
+    (Pdb) commands 1
+    (com) pp i
+    (com) pp number_sum
+    (com) end
+    (Pdb) c
+    15
+    105
+    > /home/craig/projects/intro_debugging_python/pointless_loop.py(6)pointless_loop()
+    -> number_sum += i
+
+----
+
+::
+
+    > /home/craig/projects/intro_debugging_python/pointless_loop.py(6)pointless_loop()
+    -> number_sum += i
+    (Pdb) c
+    16
+    120
+    > /home/craig/projects/intro_debugging_python/pointless_loop.py(6)pointless_loop()
+    -> number_sum += i
+    (Pdb) c
+    17
+    136
+    > /home/craig/projects/intro_debugging_python/pointless_loop.py(6)pointless_loop()
+    -> number_sum += i
+    (Pdb) b
+    Num Type         Disp Enb   Where
+    1   breakpoint   keep yes   at /home/craig/projects/intro_debugging_python/pointless_loop.py:6
+        stop only if number_sum > 100
+        breakpoint already hit 17 times
+
+----
+
+Disabling Breakpoints...
+========================
+
+----
+
+``disable`` *<breakpoint number>*
+
+``disable 1``
+
+----
+
+::
+
+    > /home/craig/projects/intro_debugging_python/pointless_loop.py(6)pointless_loop()
+    -> number_sum += i
+    (Pdb) c
+    22
+    231
+    > /home/craig/projects/intro_debugging_python/pointless_loop.py(6)pointless_loop()
+    -> number_sum += i
+    (Pdb) c
+    23
+    253
+    > /home/craig/projects/intro_debugging_python/pointless_loop.py(6)pointless_loop()
+    -> number_sum += i
+    (Pdb) disable 1
+    Disabled breakpoint 1 at /home/craig/projects/intro_debugging_python/pointless_loop.py:6
+    (Pdb) b
+    Num Type         Disp Enb   Where
+    1   breakpoint   keep no    at /home/craig/projects/intro_debugging_python/pointless_loop.py:6
+        stop only if number_sum > 100
+        breakpoint already hit 23 times
+
+
+----
+
+Temporary Breakpoints...
+
+----
+
+::
+
+    (Pdb) tbreak 6, number_sum > 100
+    Breakpoint 1 at /home/craig/projects/intro_debugging_python/pointless_loop.py:6
+    (Pdb) l
+    1  ->	def pointless_loop(n):
+    2  	
+    3  	    number_sum = 0
+    4  	    # This is a pointless loop
+    5  	    for i in range(1, n+1):
+    6 B	        number_sum += i
+    ...
+    (Pdb) b
+    Num Type         Disp Enb   Where
+    1   breakpoint   del  yes   at /home/craig/projects/intro_debugging_python/pointless_loop.py:6
+        stop only if number_sum > 100
+    (Pdb) c
+    Deleted breakpoint 1 at /home/craig/projects/intro_debugging_python/pointless_loop.py:6
+    > /home/craig/projects/intro_debugging_python/pointless_loop.py(6)pointless_loop()
+    -> number_sum += i
+    (Pdb) pp number_sum
+    105
+    (Pdb) b
+    (Pdb) 
+
+
+----
+
+Pdb++
+=====
+
+https://pypi.python.org/pypi/pdbpp/
+
+----
+
+Demo...
+=======
+----
+
+Helpful links...
+================
+
+----
+
+
+Pdb Debugger:
+
+* https://pymotw.com/3/pdb/
+* https://github.com/nblock/pdb-cheatsheet
+* https://docs.python.org/3/library/pdb.html
+
+Logging:
+
+* https://pymotw.com/3/logging/
+* https://docs.python.org/3/library/logging.html
+
+Pdb++:
+
+* https://pypi.python.org/pypi/pdbpp/
+
+
+----
+
+Questions?
+==========
+
+-----
+
+Thank you!
+==========
+
+----
+
+Introduction to Debugging in Python
+===================================
+
+* Author: Craig Maloney
+* Email: craig@decafbad.net
+* Website: http://decafbad.nety
+* Presented: 2017-04-11
