@@ -11,8 +11,8 @@ Introduction to Debugging in Python
 
 * Author: Craig Maloney
 * Email: craig@decafbad.net
-* Website: http://decafbad.nety
-* Presented: 2017-04-11
+* Website: http://decafbad.net
+* Presented: 2017-04-29
 
 ----
 
@@ -1130,6 +1130,21 @@ A few more commands...
 
 ----
 
+Next and Step
+=============
+
+----
+
+``n``: runs the next line of the code
+``s``: steps into a function
+
+----
+
+Demo
+====
+
+----
+
 Conditional breakpoint...
 =========================
 
@@ -1255,6 +1270,20 @@ Temporary Breakpoints...
     (Pdb) b
     (Pdb) 
 
+----
+
+What we learned
+===============
+
+----
+
+What we learned...
+
+* ``next`` and ``step`` can navigate through the code
+* Breakpoints can be conditionally triggered
+* ``c`` can also continue from where we left off in the code
+* Breakpoints may be disabled so they no longer fire
+* Temporary Breakpoints may be set so they are deleted once they are hit
 
 ----
 
@@ -1387,5 +1416,5 @@ Introduction to Debugging in Python
 
 * Author: Craig Maloney
 * Email: craig@decafbad.net
-* Website: http://decafbad.nety
-* Presented: 2017-04-11
+* Website: http://decafbad.net
+* Presented: 2017-04-29
