@@ -1,4 +1,4 @@
-# intro_debugging_python
+# Intro to Debugging with Python
 Slides and code from the Introduction to Python Debugging presentation
 
 
